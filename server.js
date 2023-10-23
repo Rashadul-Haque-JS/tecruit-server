@@ -27,7 +27,8 @@ app.use(
   })
 );
 
-app.use("/api/v1", routes.job);
+app.use("/api", routes.auth);
+app.use("/api", routes.job);
 
 
 connectToMongoDB()

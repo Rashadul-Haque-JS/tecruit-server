@@ -10,6 +10,10 @@ const jobSchema = new mongoose.Schema({
     required: true,
     default: "data/IT",
   },
+  subCategory: {
+    type: String,
+    required: true,
+  },
   position: {
     type: String,
     required: true,
@@ -80,3 +84,4 @@ const jobSchema = new mongoose.Schema({
 const Job = mongoose.model("Job", jobSchema);
 
 module.exports = Job;
+

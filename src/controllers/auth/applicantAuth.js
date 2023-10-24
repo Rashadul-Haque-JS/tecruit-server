@@ -28,28 +28,9 @@ const applicantSignup = async (req, res) => {
   }
 };
 
-const getApplicant = (req, res) => {
-    const authorizationHeader = req.headers.authorization;
-  
-    if (!authorizationHeader) {
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
-  
-    const tokenParts = authorizationHeader.split(' ');
-    if (tokenParts.length !== 2 || tokenParts[0].toLowerCase() !== 'bearer') {
-      return res.status(401).json({ message: 'Invalid token format' });
-    }
-  
-    const token = tokenParts[1];
-  
-    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ message: 'Unauthorized' });
-      }
-  
-      const email = decoded.email;
-  
-      // Fetch the applicant's information
+const getApplicant =async (req, res) => {
+    const email = req.email;
+    try {
       const applicant = await Applicant.findOne({ email });
   
       if (!applicant) {
@@ -63,65 +44,50 @@ const getApplicant = (req, res) => {
       };
   
       return res.status(200).json(authApplicant);
-    });
+    }catch (error) {
+      return res.status(500).json({ message: 'Internal server error' });    }
   };
-  const updateApplicant = (req, res) => {
-    const token = req.headers.authorization;
+
+  const updateApplicant = async (req, res) => {
+    const email = req.email;
   
-    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ message: 'Unauthorized' });
+    try {
+      const applicant = await Applicant.findOne({ email });
+
+      if (!applicant) {
+        return res.status(404).json({ message: 'Applicant not found' });
       }
-  
-      const email = decoded.email;
-  
-      try {
-        const applicant = await Applicant.findOne({ email });
-  
-        if (!applicant) {
-          return res.status(404).json({ message: 'Applicant not found' });
-        }
-  
-        if (req.body.name) {
-          applicant.name = req.body.name;
-        }
-  
-        if (req.body.age) {
-          applicant.age = req.body.age;
-        }
-  
-        await applicant.save();
-  
-        return res.status(200).json(applicant);
-      } catch (error) {
-        return res.status(500).json({ message: 'Internal server error' });
+
+      if (req.body.name) {
+        applicant.name = req.body.name;
       }
-    });
+
+      if (req.body.age) {
+        applicant.age = req.body.age;
+      }
+
+      await applicant.save();
+
+      return res.status(200).json(applicant);
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal server error' });
+    }
   };
-  const deleteApplicant = (req, res) => {
-    const token = req.headers.authorization;
+
+  const deleteApplicant = async (req, res) => {
+    const email = req.email;
+    try {
+      const result = await Applicant.deleteOne({ email });
   
-    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ message: 'Unauthorized' });
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ message: 'Applicant not found' });
       }
   
-      const email = decoded.email;
-  
-      try {
-        const applicant = await Applicant.findOne({ email });
-  
-        if (!applicant) {
-          return res.status(404).json({ message: 'Applicant not found' });
-        }
-  
-        await applicant.remove();
-  
-        return res.status(204).json();
-      } catch (error) {
-        return res.status(500).json({ message: 'Internal server error' });
-      }
-    });
+      return res.status(204).json();
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
   };
 
 module.exports = {

@@ -1,8 +1,19 @@
 const Job = require('../../models/jobs');
-// const sanitizeHtml = require('sanitize-html'); 
+const JobListing = require('../../models/jobListing');
+const Company = require('../../models/company');
+const jwt = require('jsonwebtoken');
 
 const createJob = async (req, res) => {
   try {
+    let authCompany;
+    const email = req.token;
+    const currentCompany = await Company.findOne({ email });
+    if (!currentCompany) {
+      return res.status(404).json({ message: 'Company not found' });
+    }else{
+      authCompany = { id: currentCompany._id };
+    }
+
     const {
       jobTitle,
       category,
@@ -20,6 +31,8 @@ const createJob = async (req, res) => {
       email_to_applications,
       application_url,
     } = req.body;
+
+    
 
     // Create a new job using the Job model
     const newJob = new Job({
@@ -40,8 +53,14 @@ const createJob = async (req, res) => {
       application_url,
     });
 
+    const newJobListing = new JobListing({
+      jobTitle,
+      published_on,
+      companyId: authCompany.id,
+    });
     // Save the new job to the database
     await newJob.save();
+    await newJobListing.save();
 
     return res.status(201).json({ message: 'Job listing created successfully', job: newJob });
   } catch (error) {

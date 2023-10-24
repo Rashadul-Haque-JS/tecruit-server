@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const checkAuthToken = require("../middleware/auth/checkToken");
 const {handleDuplicateSignup,findApplicantOrCompany} = require("../middleware/auth/authMiddlewares");
 const { login } = require("../controllers/auth/loginController");
 
@@ -18,15 +18,17 @@ const {
     deleteCompany
 } = require("../controllers/auth/companyAuth");
 
+
+
 router.post("/login",findApplicantOrCompany, login);
 router.post("/applicants",handleDuplicateSignup, applicantSignup);
-router.get("/applicants", getApplicant);
-router.put("/applicants", updateApplicant);
-router.delete("/applicants", deleteApplicant);
+router.get("/applicants",checkAuthToken, getApplicant);
+router.put("/applicants",checkAuthToken, updateApplicant);
+router.delete("/applicants",checkAuthToken, deleteApplicant);
 
 router.post("/companies",handleDuplicateSignup, companySignup);
-router.get("/companies", getCompany);
-router.put("/companies", updateCompany);
-router.delete("/companies", deleteCompany);
+router.get("/companies",checkAuthToken, getCompany);
+router.put("/companies", checkAuthToken, updateCompany);
+router.delete("/companies",checkAuthToken, deleteCompany);
 
 module.exports = router;

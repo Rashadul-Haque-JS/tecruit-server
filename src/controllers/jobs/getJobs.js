@@ -1,5 +1,7 @@
 
 const Job = require('../../models/jobs');
+const JobListing = require("../../models/jobListing");
+const Company = require('../../models/company');
 
 const getJobs = async (req, res) => {
     try {
@@ -12,6 +14,21 @@ const getJobs = async (req, res) => {
     }
   };
 
+  const getJobListByCompany = async (req, res) => {
+    const email = req.email;
+    try{
+        const result = await Company.findOne({ email });
+    if (!result) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+    const jobList = await JobListing.find({ companyId: result._id });
+    return res.status(200).json(jobList);
+    }catch (error) {
+        console.log(error);
+    return res.status(500).json({ message: "Internal server error" });}
+}
+
   module.exports = {
-    getJobs
+    getJobs,
+    getJobListByCompany
   }

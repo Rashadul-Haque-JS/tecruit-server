@@ -31,7 +31,6 @@ const findApplicantOrCompany = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Database error:', error);
     return res.status(500).json({ message: 'Server error' });
   }
 };
@@ -50,7 +49,6 @@ const handleDuplicateSignup = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Database error:', error);
     return res.status(500).json({ message: 'Server error' });
   }
 };

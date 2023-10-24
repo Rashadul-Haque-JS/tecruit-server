@@ -33,7 +33,7 @@ app.use("/api", routes.job);
 
 connectToMongoDB()
   .then(() => {
-    const PORT = process.env.BACKEND_PORT || 8990;
+    const PORT = process.env.PORT || 8990;
     app.listen(PORT, () => {
       console.log(`SERVER STARTED ON PORT: ${PORT}`);
     });

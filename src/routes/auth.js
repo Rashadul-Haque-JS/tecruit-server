@@ -3,7 +3,7 @@ const router = express.Router();
 const checkAuthToken = require("../middleware/auth/checkToken");
 const {handleDuplicateSignup,findApplicantOrCompany} = require("../middleware/auth/authMiddlewares");
 const { login } = require("../controllers/auth/loginController");
-
+const {createSubscriber} = require("../controllers/auth/subscribers");
 const {
   applicantSignup,
   getApplicant,
@@ -25,6 +25,8 @@ router.post("/applicants",handleDuplicateSignup, applicantSignup);
 router.get("/applicants",checkAuthToken, getApplicant);
 router.put("/applicants",checkAuthToken, updateApplicant);
 router.delete("/applicants",checkAuthToken, deleteApplicant);
+
+router.post("/subscribers", createSubscriber);
 
 router.post("/companies",handleDuplicateSignup, companySignup);
 router.get("/companies",checkAuthToken, getCompany);

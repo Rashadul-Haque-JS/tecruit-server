@@ -24,7 +24,6 @@ const checkAuthToken = async (req, res, next) => {
         }
       });
     });
-
     req.email = decodedToken.email;
     next();
   } catch (error) {

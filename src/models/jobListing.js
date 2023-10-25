@@ -5,6 +5,10 @@ const jobListingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  jobId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
   published_on: {
     type: String,
     required: true,

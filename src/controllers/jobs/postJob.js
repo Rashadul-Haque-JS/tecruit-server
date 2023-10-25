@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const createJob = async (req, res) => {
   try {
     let authCompany;
-    const email = req.token;
+    const email = req.email;
     const currentCompany = await Company.findOne({ email });
     if (!currentCompany) {
       return res.status(404).json({ message: 'Company not found' });
@@ -57,12 +57,13 @@ const createJob = async (req, res) => {
       jobTitle,
       published_on,
       companyId: authCompany.id,
+      jobId: newJob._id
     });
     // Save the new job to the database
     await newJob.save();
     await newJobListing.save();
 
-    return res.status(201).json({ message: 'Job listing created successfully', job: newJob });
+    return res.status(201).json({ message: 'Job posted successfully'});
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error' });
   }

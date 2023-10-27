@@ -22,10 +22,11 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60, httpOnly: false },
+    cookie: { maxAge: 1000 * 60 * 60, httpOnly: true, secure: true },
     resave: false,
   })
 );
+
 
 app.use("/api", routes.auth);
 app.use("/api", routes.job);
